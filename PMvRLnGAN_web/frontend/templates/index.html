@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PMvRLnGAN - 投資組合管理系統</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 自定義 CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+    <header class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1>PMvRLnGAN</h1>
+                    <p class="lead">基於強化學習和圖注意力網絡的投資組合管理系統</p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <button id="startAnalysisBtn" class="btn btn-primary btn-lg">開始分析</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container my-5">
+        <section id="introduction" class="mb-5">
+            <h2>系統介紹</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <p>PMvRLnGAN 是一個基於強化學習和圖注意力網絡的投資組合管理系統，它通過以下四個步驟來實現投資組合的優化：</p>
+                    <ol>
+                        <li><strong>GAT 股票關係分析</strong>：利用圖注意力網絡分析股票之間的關聯性</li>
+                        <li><strong>Stock-Picked Agent 股票選擇</strong>：選擇風險最小的股票組合</li>
+                        <li><strong>TCN-AE 特徵壓縮</strong>：壓縮股票的技術指標，提取特徵</li>
+                        <li><strong>Trading Agent 交易決策</strong>：基於低風險股票列表進行每日交易決策</li>
+                    </ol>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">系統特點</h5>
+                            <ul>
+                                <li>使用預訓練模型，無需重新訓練</li>
+                                <li>基於風險最小化的股票選擇策略</li>
+                                <li>考慮股票間的關聯性</li>
+                                <li>提供每日交易決策建議</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="analysis" class="mb-5 d-none">
+            <h2>分析結果</h2>
+            <div class="row">
+                <div class="col-md-12 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <ul class="nav nav-tabs card-header-tabs" id="resultTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="stock-list-tab" data-bs-toggle="tab" data-bs-target="#stock-list" type="button" role="tab" aria-controls="stock-list" aria-selected="true">股票列表</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="trading-decisions-tab" data-bs-toggle="tab" data-bs-target="#trading-decisions" type="button" role="tab" aria-controls="trading-decisions" aria-selected="false">交易決策</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="performance-tab" data-bs-toggle="tab" data-bs-target="#performance" type="button" role="tab" aria-controls="performance" aria-selected="false">績效指標</button>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-body">
+                            <div class="tab-content" id="resultTabsContent">
+                                <div class="tab-pane fade show active" id="stock-list" role="tabpanel" aria-labelledby="stock-list-tab">
+                                    <h5 class="card-title">低風險股票列表</h5>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped" id="stockListTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>股票代碼</th>
+                                                    <th>股票名稱</th>
+                                                    <th>風險評分</th>
+                                                    <th>建議權重</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- 這裡將由 JavaScript 填充數據 -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="trading-decisions" role="tabpanel" aria-labelledby="trading-decisions-tab">
+                                    <h5 class="card-title">交易決策</h5>
+                                    <div class="mb-3">
+                                        <label for="tradingDate" class="form-label">選擇日期</label>
+                                        <input type="date" class="form-control" id="tradingDate">
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped" id="tradingDecisionsTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>股票代碼</th>
+                                                    <th>股票名稱</th>
+                                                    <th>操作</th>
+                                                    <th>數量</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- 這裡將由 JavaScript 填充數據 -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="performance" role="tabpanel" aria-labelledby="performance-tab">
+                                    <h5 class="card-title">績效指標</h5>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="card mb-3">
+                                                <div class="card-body text-center">
+                                                    <h5 class="card-title">總回報率</h5>
+                                                    <p class="display-4" id="totalReturn">15%</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="card mb-3">
+                                                <div class="card-body text-center">
+                                                    <h5 class="card-title">夏普比率</h5>
+                                                    <p class="display-4" id="sharpeRatio">1.2</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="card mb-3">
+                                                <div class="card-body text-center">
+                                                    <h5 class="card-title">最大回撤</h5>
+                                                    <p class="display-4" id="maxDrawdown">5%</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5 class="card-title">績效圖表</h5>
+                                            <canvas id="performanceChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="loading" class="text-center d-none">
+            <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3">正在分析中，請稍候...</p>
+        </section>
+    </main>
+
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p>&copy; 2024 PMvRLnGAN. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p>基於強化學習和圖注意力網絡的投資組合管理系統</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- 自定義 JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html> 
