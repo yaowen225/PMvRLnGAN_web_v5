@@ -61,7 +61,7 @@
                         <div class="card-header">
                             <ul class="nav nav-tabs card-header-tabs" id="resultTabs" role="tablist">
                                 <li class="nav-item" role="presentation">
-                                    <button class="nav-link active" id="stock-list-tab" data-bs-toggle="tab" data-bs-target="#stock-list" type="button" role="tab" aria-controls="stock-list" aria-selected="true">股票列表</button>
+                                    <button class="nav-link active" id="stockList-tab" data-bs-toggle="tab" data-bs-target="#stockList" type="button" role="tab" aria-controls="stockList" aria-selected="true">股票列表</button>
                                 </li>
                                 <li class="nav-item" role="presentation">
                                     <button class="nav-link" id="trading-decisions-tab" data-bs-toggle="tab" data-bs-target="#trading-decisions" type="button" role="tab" aria-controls="trading-decisions" aria-selected="false">交易決策</button>
@@ -73,22 +73,30 @@
                         </div>
                         <div class="card-body">
                             <div class="tab-content" id="resultTabsContent">
-                                <div class="tab-pane fade show active" id="stock-list" role="tabpanel" aria-labelledby="stock-list-tab">
-                                    <h5 class="card-title">低風險股票列表</h5>
-                                    <div class="table-responsive">
-                                        <table class="table table-striped" id="stockListTable">
-                                            <thead>
-                                                <tr>
-                                                    <th>股票代碼</th>
-                                                    <th>股票名稱</th>
-                                                    <th>風險評分</th>
-                                                    <th>建議權重</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <!-- 這裡將由 JavaScript 填充數據 -->
-                                            </tbody>
-                                        </table>
+                                <div class="tab-pane fade show active" id="stockList" role="tabpanel" aria-labelledby="stockList-tab">
+                                    <div class="card-body">
+                                        <h5 id="stockListTitle" class="card-title mb-3">低風險股票列表</h5>
+                                        <div class="mb-3">
+                                            <label for="quarterSelect" class="form-label">選擇季度：</label>
+                                            <select id="quarterSelect" class="form-select">
+                                                <!-- 季度選項將由 JavaScript 填充 -->
+                                            </select>
+                                        </div>
+                                        <div class="table-responsive">
+                                            <table id="stockListTable" class="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>股票代碼</th>
+                                                        <th>股票名稱</th>
+                                                        <th>風險值</th>
+                                                        <th>權重</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <!-- 股票列表將由 JavaScript 填充 -->
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="tab-pane fade" id="trading-decisions" role="tabpanel" aria-labelledby="trading-decisions-tab">

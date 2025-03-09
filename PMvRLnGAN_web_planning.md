@@ -442,6 +442,63 @@
 - 階段二完成度：20%
 - 下一步：實現股票列表 API 端點的實際資料讀取功能
 
+### 2024-05-31
+- 實現日期範圍限制和有效交易日檢查功能
+- 創建交易適配器（trading_adapter.py），實現日期驗證和交易決策獲取
+- 創建股票適配器（stock_adapter.py），實現低風險股票列表讀取
+- 添加季度選擇器功能，使用戶可以選擇不同季度的股票列表
+- 更新前端 JavaScript，實現日期範圍限制和錯誤處理
+- 添加新的 API 端點：
+  - `/api/trading/valid-dates`：獲取有效的交易日期範圍
+  - `/api/stock-picked/quarters`：獲取可用的季度列表
+- 文件變更：
+  - 新增：PMvRLnGAN_web/backend/adapters/__init__.py
+  - 新增：PMvRLnGAN_web/backend/adapters/trading_adapter.py
+  - 新增：PMvRLnGAN_web/backend/adapters/stock_adapter.py
+  - 修改：PMvRLnGAN_web/backend/app.py
+  - 修改：PMvRLnGAN_web/backend/config.py
+  - 修改：PMvRLnGAN_web/frontend/static/js/main.js
+  - 修改：PMvRLnGAN_web/frontend/templates/index.html
+- 階段二完成度：40%
+- 下一步：實現 GAT 適配器和 TCN-AE 適配器，完成所有 API 端點的實際數據讀取功能
+
+### 2024-06-01
+- 修復應用程序啟動錯誤：解決 logger.py 中的類型錯誤問題
+- 修改 logger.py 中的日誌級別設置方式，直接使用 LOG_LEVEL 常量而非 getattr 函數
+- 確保應用程序可以正常啟動和運行
+- 文件變更：
+  - 修改：PMvRLnGAN_web/backend/logger.py
+- 階段二完成度：42%
+- 下一步：實現 GAT 適配器和 TCN-AE 適配器，完成所有 API 端點的實際數據讀取功能
+
+### 2024-06-02
+- 優化交易適配器，移除不必要的 tcn_daily_trade_info.7z 解壓代碼
+- 修改交易適配器，直接從 Low-risk stock list.csv 讀取交易日期和股票數據
+- 實現基於低風險股票列表的交易決策生成
+- 實現績效摘要 API 端點，提供模擬的績效數據
+- 文件變更：
+  - 修改：PMvRLnGAN_web/backend/adapters/trading_adapter.py
+  - 修改：PMvRLnGAN_web/backend/app.py
+- 階段二完成度：60%
+- 下一步：實現 GAT 適配器，完成所有 API 端點的實際數據讀取功能
+
+### 2024-06-03
+- 訓練 Trading Agent 模型並保存結果，為網站開發準備真實數據
+- 在 train trade agent.ipynb 中添加模型保存代碼，具體修改如下：
+  1. 在 `trained_ppo = agent.train_model(...)` 之後添加模型保存代碼
+  2. 創建 models 目錄並保存模型和配置文件
+  3. 保存交易決策示例和性能指標
+- 需要保存的文件包括：
+  - trading_agent_model.zip：訓練好的 RL 模型
+  - trading_agent_config.json：模型配置和超參數
+  - trading_decisions_examples.csv：示例交易決策
+  - trading_agent_performance.json：模型性能指標
+- 文件變更：
+  - 修改：PMvRLnGAN/Trading Agent/train trade agent.ipynb
+  - 新增：PMvRLnGAN/Trading Agent/models/（包含上述保存的文件）
+- 階段二完成度：65%
+- 下一步：修改 trading_adapter.py 使用訓練好的模型生成交易決策
+
 ### [待添加更多日誌條目]
 
 ---

@@ -36,7 +36,7 @@ console_handler.setFormatter(log_format)
 
 # 創建日誌記錄器
 logger = logging.getLogger('pmvrlngan_web')
-logger.setLevel(getattr(logging, LOG_LEVEL))
+logger.setLevel(LOG_LEVEL)
 logger.addHandler(file_handler)
 logger.addHandler(console_handler)
 

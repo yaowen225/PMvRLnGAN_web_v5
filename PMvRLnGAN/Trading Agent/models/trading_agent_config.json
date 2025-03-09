@@ -1,0 +1,14 @@
+{
+    "policy": "MlpPolicy",
+    "learning_rate": 0.00025,
+    "batch_size": 250,
+    "ent_coef": 0.01,
+    "n_steps": 2048,
+    "gamma": 0.99,
+    "train_timesteps": 5000,
+    "env_info": {
+        "env_class": "StockTradingEnv",
+        "stock_dim": 14,
+        "initial_amount": 1000000
+    }
+}

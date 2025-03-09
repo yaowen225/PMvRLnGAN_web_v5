@@ -1,0 +1,15 @@
+{
+    "annual_return": -0.443032666496318,
+    "cumulative_returns": -0.025223017176249973,
+    "annual_volatility": 0.1831791809805628,
+    "sharpe_ratio": -3.427162507686144,
+    "calmar_ratio": -9.905539922040045,
+    "stability": 0.6308438931725261,
+    "max_drawdown": -0.04472574639879655,
+    "omega_ratio": 0.5731841720894555,
+    "sortino_ratio": -4.123885274584103,
+    "skew": 0,
+    "kurtosis": 0,
+    "tail_ratio": 0.6538589479332292,
+    "daily_value_at_risk": -0.025569617143309454
+}

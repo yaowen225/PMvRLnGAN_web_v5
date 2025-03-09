@@ -34,3 +34,98 @@
 2025-03-09 21:36:47,466 - pmvrlngan_web - INFO - 獲取低風險股票列表，季度: None
 2025-03-09 21:36:47,466 - pmvrlngan_web - INFO - 獲取交易決策，日期: 2025-03-09, 股票IDs: None
 2025-03-09 21:36:47,467 - pmvrlngan_web - INFO - 獲取綜合結果，開始日期: 2024-03-09, 結束日期: 2025-03-09
+2025-03-09 21:52:50,729 - pmvrlngan_web - INFO - PMvRLnGAN Web 應用啟動
+2025-03-09 21:52:50,729 - pmvrlngan_web - INFO - 前端目錄: C:\Users\yaowe\Desktop\Personal\code\PMvRLnGAN_web_v5\PMvRLnGAN_web\frontend
+2025-03-09 21:52:50,729 - pmvrlngan_web - INFO - 模板目錄: C:\Users\yaowe\Desktop\Personal\code\PMvRLnGAN_web_v5\PMvRLnGAN_web\frontend\templates
+2025-03-09 21:52:50,731 - pmvrlngan_web - INFO - 靜態文件目錄: C:\Users\yaowe\Desktop\Personal\code\PMvRLnGAN_web_v5\PMvRLnGAN_web\frontend\static
+2025-03-09 21:52:50,731 - pmvrlngan_web - INFO - PMvRLnGAN 目錄: ..\PMvRLnGAN
+2025-03-09 21:52:50,733 - pmvrlngan_web - INFO - 啟動 PMvRLnGAN Web 應用於 http://localhost:5000
+2025-03-09 22:12:41,948 - pmvrlngan_web - INFO - PMvRLnGAN Web 應用啟動
+2025-03-09 22:12:41,948 - pmvrlngan_web - INFO - 前端目錄: C:\Users\yaowe\Desktop\Personal\code\PMvRLnGAN_web_v5\PMvRLnGAN_web\frontend
+2025-03-09 22:12:41,948 - pmvrlngan_web - INFO - 模板目錄: C:\Users\yaowe\Desktop\Personal\code\PMvRLnGAN_web_v5\PMvRLnGAN_web\frontend\templates
+2025-03-09 22:12:41,949 - pmvrlngan_web - INFO - 靜態文件目錄: C:\Users\yaowe\Desktop\Personal\code\PMvRLnGAN_web_v5\PMvRLnGAN_web\frontend\static
+2025-03-09 22:12:41,949 - pmvrlngan_web - INFO - PMvRLnGAN 目錄: ..\PMvRLnGAN
+2025-03-09 22:12:41,951 - pmvrlngan_web - INFO - 啟動 PMvRLnGAN Web 應用於 http://localhost:5000
+2025-03-09 22:12:42,522 - pmvrlngan_web - INFO - PMvRLnGAN Web 應用啟動
+2025-03-09 22:12:42,522 - pmvrlngan_web - INFO - 前端目錄: C:\Users\yaowe\Desktop\Personal\code\PMvRLnGAN_web_v5\PMvRLnGAN_web\frontend
+2025-03-09 22:12:42,523 - pmvrlngan_web - INFO - 模板目錄: C:\Users\yaowe\Desktop\Personal\code\PMvRLnGAN_web_v5\PMvRLnGAN_web\frontend\templates
+2025-03-09 22:12:42,523 - pmvrlngan_web - INFO - 靜態文件目錄: C:\Users\yaowe\Desktop\Personal\code\PMvRLnGAN_web_v5\PMvRLnGAN_web\frontend\static
+2025-03-09 22:12:42,523 - pmvrlngan_web - INFO - PMvRLnGAN 目錄: ..\PMvRLnGAN
+2025-03-09 22:12:42,525 - pmvrlngan_web - INFO - 啟動 PMvRLnGAN Web 應用於 http://localhost:5000
+2025-03-09 22:12:44,751 - pmvrlngan_web - INFO - 訪問首頁
+2025-03-09 22:12:44,906 - pmvrlngan_web - INFO - 獲取有效的交易日期範圍
+2025-03-09 22:12:44,907 - pmvrlngan_web - INFO - 獲取可用的季度列表
+2025-03-09 22:12:45,064 - pmvrlngan_web - INFO - 獲取低風險股票列表，季度: 2023-Q4
+2025-03-09 22:12:49,428 - pmvrlngan_web - INFO - 獲取交易決策，日期: 2023-12-31, 股票IDs: None
+2025-03-09 22:12:49,429 - pmvrlngan_web - INFO - 獲取低風險股票列表，季度: 2023-Q4
+2025-03-09 22:12:49,430 - pmvrlngan_web - WARNING - 獲取交易決策失敗: 所選日期不是交易日，最近的交易日是 2023-12-29
+2025-03-09 22:12:49,431 - pmvrlngan_web - INFO - 獲取綜合結果，開始日期: 2024-03-09, 結束日期: 2025-03-09
+2025-03-09 22:12:49,433 - pmvrlngan_web - WARNING - 獲取綜合結果失敗: 日期超出有效範圍 (2020-01-01 到 2023-12-31)
+2025-03-09 22:13:05,902 - pmvrlngan_web - INFO - 獲取交易決策，日期: 2022-05-30, 股票IDs: None
+2025-03-09 22:13:16,294 - pmvrlngan_web - INFO - 訪問首頁
+2025-03-09 22:13:16,344 - pmvrlngan_web - INFO - 獲取有效的交易日期範圍
+2025-03-09 22:13:16,344 - pmvrlngan_web - INFO - 獲取可用的季度列表
+2025-03-09 22:13:16,390 - pmvrlngan_web - INFO - 獲取低風險股票列表，季度: 2023-Q4
+2025-03-09 22:13:19,619 - pmvrlngan_web - INFO - 獲取低風險股票列表，季度: 2023-Q4
+2025-03-09 22:13:19,620 - pmvrlngan_web - INFO - 獲取交易決策，日期: 2023-12-31, 股票IDs: None
+2025-03-09 22:13:19,622 - pmvrlngan_web - INFO - 獲取綜合結果，開始日期: 2024-03-09, 結束日期: 2025-03-09
+2025-03-09 22:13:19,622 - pmvrlngan_web - WARNING - 獲取交易決策失敗: 所選日期不是交易日，最近的交易日是 2023-12-29
+2025-03-09 22:13:19,623 - pmvrlngan_web - WARNING - 獲取綜合結果失敗: 日期超出有效範圍 (2020-01-01 到 2023-12-31)
+2025-03-09 22:13:27,201 - pmvrlngan_web - INFO - 獲取交易決策，日期: 2023-12-29, 股票IDs: None
+2025-03-09 22:13:28,305 - pmvrlngan_web - INFO - 獲取綜合結果，開始日期: 2020-01-01, 結束日期: 2023-12-31
+2025-03-09 22:14:53,771 - pmvrlngan_web - INFO - 訪問首頁
+2025-03-09 22:14:53,810 - pmvrlngan_web - INFO - 獲取有效的交易日期範圍
+2025-03-09 22:14:53,811 - pmvrlngan_web - INFO - 獲取可用的季度列表
+2025-03-09 22:14:53,852 - pmvrlngan_web - INFO - 獲取低風險股票列表，季度: 2023-Q4
+2025-03-09 22:15:10,462 - pmvrlngan_web - INFO - 獲取低風險股票列表，季度: 2023-Q4
+2025-03-09 22:15:10,462 - pmvrlngan_web - INFO - 獲取交易決策，日期: 2023-12-31, 股票IDs: None
+2025-03-09 22:15:10,463 - pmvrlngan_web - INFO - 獲取綜合結果，開始日期: 2024-03-09, 結束日期: 2025-03-09
+2025-03-09 22:15:10,465 - pmvrlngan_web - WARNING - 獲取交易決策失敗: 所選日期不是交易日，最近的交易日是 2023-12-29
+2025-03-09 22:15:10,465 - pmvrlngan_web - WARNING - 獲取綜合結果失敗: 日期超出有效範圍 (2020-01-01 到 2023-12-31)
+2025-03-09 22:15:15,357 - pmvrlngan_web - INFO - 訪問首頁
+2025-03-09 22:15:15,403 - pmvrlngan_web - INFO - 獲取有效的交易日期範圍
+2025-03-09 22:15:15,404 - pmvrlngan_web - INFO - 獲取可用的季度列表
+2025-03-09 22:15:15,441 - pmvrlngan_web - INFO - 獲取低風險股票列表，季度: 2023-Q4
+2025-03-09 22:16:03,387 - pmvrlngan_web - INFO - 獲取低風險股票列表，季度: 2023-Q4
+2025-03-09 22:16:03,388 - pmvrlngan_web - INFO - 獲取交易決策，日期: 2023-12-31, 股票IDs: None
+2025-03-09 22:16:03,390 - pmvrlngan_web - INFO - 獲取綜合結果，開始日期: 2024-03-09, 結束日期: 2025-03-09
+2025-03-09 22:16:03,395 - pmvrlngan_web - WARNING - 獲取交易決策失敗: 所選日期不是交易日，最近的交易日是 2023-12-29
+2025-03-09 22:16:03,396 - pmvrlngan_web - WARNING - 獲取綜合結果失敗: 日期超出有效範圍 (2020-01-01 到 2023-12-31)
+2025-03-09 22:16:33,617 - pmvrlngan_web - INFO - 獲取低風險股票列表，季度: 2023-Q2
+2025-03-09 22:16:35,110 - pmvrlngan_web - INFO - 獲取低風險股票列表，季度: 2021-Q2
+2025-03-09 22:17:24,100 - pmvrlngan_web - INFO - 獲取交易決策，日期: 2023-12-06, 股票IDs: None
+2025-03-09 23:22:11,682 - pmvrlngan_web - INFO - PMvRLnGAN Web 應用啟動
+2025-03-09 23:22:11,682 - pmvrlngan_web - INFO - 前端目錄: C:\Users\yaowe\Desktop\Personal\code\PMvRLnGAN_web_v5\PMvRLnGAN_web\frontend
+2025-03-09 23:22:11,682 - pmvrlngan_web - INFO - 模板目錄: C:\Users\yaowe\Desktop\Personal\code\PMvRLnGAN_web_v5\PMvRLnGAN_web\frontend\templates
+2025-03-09 23:22:11,682 - pmvrlngan_web - INFO - 靜態文件目錄: C:\Users\yaowe\Desktop\Personal\code\PMvRLnGAN_web_v5\PMvRLnGAN_web\frontend\static
+2025-03-09 23:22:11,684 - pmvrlngan_web - INFO - PMvRLnGAN 目錄: ..\PMvRLnGAN
+2025-03-09 23:22:11,686 - pmvrlngan_web - INFO - 啟動 PMvRLnGAN Web 應用於 http://localhost:5000
+2025-03-09 23:22:12,294 - pmvrlngan_web - INFO - PMvRLnGAN Web 應用啟動
+2025-03-09 23:22:12,294 - pmvrlngan_web - INFO - 前端目錄: C:\Users\yaowe\Desktop\Personal\code\PMvRLnGAN_web_v5\PMvRLnGAN_web\frontend
+2025-03-09 23:22:12,294 - pmvrlngan_web - INFO - 模板目錄: C:\Users\yaowe\Desktop\Personal\code\PMvRLnGAN_web_v5\PMvRLnGAN_web\frontend\templates
+2025-03-09 23:22:12,294 - pmvrlngan_web - INFO - 靜態文件目錄: C:\Users\yaowe\Desktop\Personal\code\PMvRLnGAN_web_v5\PMvRLnGAN_web\frontend\static
+2025-03-09 23:22:12,294 - pmvrlngan_web - INFO - PMvRLnGAN 目錄: ..\PMvRLnGAN
+2025-03-09 23:22:12,296 - pmvrlngan_web - INFO - 啟動 PMvRLnGAN Web 應用於 http://localhost:5000
+2025-03-09 23:22:15,509 - pmvrlngan_web - INFO - 訪問首頁
+2025-03-09 23:22:15,628 - pmvrlngan_web - INFO - 獲取有效的交易日期範圍
+2025-03-09 23:22:15,629 - pmvrlngan_web - INFO - 獲取可用的季度列表
+2025-03-09 23:22:15,764 - pmvrlngan_web - INFO - 獲取低風險股票列表，季度: 2024-Q2
+2025-03-09 23:22:18,764 - pmvrlngan_web - INFO - 獲取交易決策，日期: 2024-05-16, 股票IDs: None
+2025-03-09 23:22:18,764 - pmvrlngan_web - INFO - 獲取低風險股票列表，季度: 2024-Q2
+2025-03-09 23:22:18,765 - pmvrlngan_web - INFO - 獲取綜合結果，開始日期: 2024-03-09, 結束日期: 2025-03-09
+2025-03-09 23:22:45,942 - pmvrlngan_web - INFO - 獲取交易決策，日期: 2022-02-17, 股票IDs: None
+2025-03-09 23:22:45,943 - pmvrlngan_web - WARNING - 獲取交易決策失敗: 所選日期不是交易日，最近的交易日是 2021-11-15
+2025-03-09 23:22:50,678 - pmvrlngan_web - INFO - 獲取交易決策，日期: 2021-11-15, 股票IDs: None
+2025-03-09 23:42:00,191 - pmvrlngan_web - INFO - 訪問首頁
+2025-03-10 00:11:32,188 - pmvrlngan_web - INFO - PMvRLnGAN Web 應用啟動
+2025-03-10 00:11:32,189 - pmvrlngan_web - INFO - 前端目錄: C:\Users\yaowe\Desktop\Personal\code\PMvRLnGAN_web_v5\PMvRLnGAN_web\frontend
+2025-03-10 00:11:32,189 - pmvrlngan_web - INFO - 模板目錄: C:\Users\yaowe\Desktop\Personal\code\PMvRLnGAN_web_v5\PMvRLnGAN_web\frontend\templates
+2025-03-10 00:11:32,189 - pmvrlngan_web - INFO - 靜態文件目錄: C:\Users\yaowe\Desktop\Personal\code\PMvRLnGAN_web_v5\PMvRLnGAN_web\frontend\static
+2025-03-10 00:11:32,190 - pmvrlngan_web - INFO - PMvRLnGAN 目錄: ..\PMvRLnGAN
+2025-03-10 00:11:32,192 - pmvrlngan_web - INFO - 啟動 PMvRLnGAN Web 應用於 http://localhost:5000
+2025-03-10 00:12:01,176 - pmvrlngan_web - INFO - PMvRLnGAN Web 應用啟動
+2025-03-10 00:12:01,176 - pmvrlngan_web - INFO - 前端目錄: C:\Users\yaowe\Desktop\Personal\code\PMvRLnGAN_web_v5\PMvRLnGAN_web\frontend
+2025-03-10 00:12:01,177 - pmvrlngan_web - INFO - 模板目錄: C:\Users\yaowe\Desktop\Personal\code\PMvRLnGAN_web_v5\PMvRLnGAN_web\frontend\templates
+2025-03-10 00:12:01,177 - pmvrlngan_web - INFO - 靜態文件目錄: C:\Users\yaowe\Desktop\Personal\code\PMvRLnGAN_web_v5\PMvRLnGAN_web\frontend\static
+2025-03-10 00:12:01,177 - pmvrlngan_web - INFO - PMvRLnGAN 目錄: ..\PMvRLnGAN
+2025-03-10 00:12:01,181 - pmvrlngan_web - INFO - 啟動 PMvRLnGAN Web 應用於 http://localhost:5000

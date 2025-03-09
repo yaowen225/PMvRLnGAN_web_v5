@@ -6,11 +6,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const analysisSection = document.getElementById('analysis');
     const loadingSection = document.getElementById('loading');
     const tradingDateInput = document.getElementById('tradingDate');
+    const quarterSelect = document.getElementById('quarterSelect');
     
-    // 設置今天的日期為交易日期輸入框的默認值
-    const today = new Date();
-    const formattedDate = today.toISOString().split('T')[0];
-    tradingDateInput.value = formattedDate;
+    // 獲取有效的交易日期範圍
+    fetchValidDateRange();
+    
+    // 獲取可用的季度列表
+    fetchAvailableQuarters();
+    
+    // 季度選擇器變更事件
+    if (quarterSelect) {
+        quarterSelect.addEventListener('change', function() {
+            fetchStockListByQuarter(this.value);
+        });
+    }
     
     // 初始化績效圖表
     const performanceChartCtx = document.getElementById('performanceChart').getContext('2d');
@@ -89,35 +98,183 @@ document.addEventListener('DOMContentLoaded', function() {
         fetchTradingDecisions(this.value);
     });
     
-    // 獲取股票列表
-    function fetchStockList() {
-        fetch('/api/stock-picked/list')
+    // 獲取有效的交易日期範圍
+    function fetchValidDateRange() {
+        fetch('/api/trading/valid-dates')
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    populateStockListTable(data.data.stocks);
+                    const { start_date, end_date } = data.data;
+                    
+                    // 設置日期選擇器的最小和最大值
+                    tradingDateInput.min = start_date;
+                    tradingDateInput.max = end_date;
+                    
+                    // 添加日期範圍提示
+                    const dateRangeInfo = document.createElement('small');
+                    dateRangeInfo.classList.add('form-text', 'text-muted');
+                    dateRangeInfo.textContent = `有效日期範圍: ${start_date} 到 ${end_date}`;
+                    tradingDateInput.parentNode.appendChild(dateRangeInfo);
+                    
+                    // 設置默認日期為範圍內的日期
+                    const today = new Date();
+                    const formattedToday = today.toISOString().split('T')[0];
+                    
+                    // 如果今天在有效範圍內，使用今天；否則使用範圍的結束日期
+                    if (formattedToday >= start_date && formattedToday <= end_date) {
+                        tradingDateInput.value = formattedToday;
+                    } else {
+                        tradingDateInput.value = end_date;
+                    }
                 } else {
-                    showError('獲取股票列表失敗：' + data.message);
+                    showError('獲取有效日期範圍失敗：' + data.message);
+                    
+                    // 設置今天的日期為交易日期輸入框的默認值
+                    const today = new Date();
+                    const formattedDate = today.toISOString().split('T')[0];
+                    tradingDateInput.value = formattedDate;
+                }
+            })
+            .catch(error => {
+                showError('獲取有效日期範圍時發生錯誤：' + error.message);
+                
+                // 設置今天的日期為交易日期輸入框的默認值
+                const today = new Date();
+                const formattedDate = today.toISOString().split('T')[0];
+                tradingDateInput.value = formattedDate;
+            });
+    }
+    
+    // 獲取可用的季度列表
+    function fetchAvailableQuarters() {
+        fetch('/api/stock-picked/quarters')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success' && data.data.quarters) {
+                    populateQuarterSelect(data.data.quarters);
+                } else {
+                    showError('獲取季度列表失敗：' + (data.message || '未知錯誤'));
+                }
+            })
+            .catch(error => {
+                showError('獲取季度列表時發生錯誤：' + error.message);
+            });
+    }
+    
+    // 填充季度選擇器
+    function populateQuarterSelect(quarters) {
+        if (!quarterSelect) return;
+        
+        // 清空現有選項
+        quarterSelect.innerHTML = '';
+        
+        // 添加季度選項
+        quarters.forEach(quarter => {
+            const option = document.createElement('option');
+            option.value = quarter;
+            option.textContent = quarter;
+            quarterSelect.appendChild(option);
+        });
+        
+        // 設置默認選中的季度（最新的季度）
+        if (quarters.length > 0) {
+            const latestQuarter = quarters[quarters.length - 1];
+            quarterSelect.value = latestQuarter;
+            
+            // 獲取該季度的股票列表
+            fetchStockListByQuarter(latestQuarter);
+        }
+    }
+    
+    // 根據季度獲取股票列表
+    function fetchStockListByQuarter(quarter) {
+        // 顯示加載提示
+        const tableBody = document.querySelector('#stockListTable tbody');
+        tableBody.innerHTML = '<tr><td colspan="4" class="text-center">正在加載股票列表...</td></tr>';
+        
+        fetch(`/api/stock-picked/list?quarter=${quarter}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success' && data.data.stocks) {
+                    populateStockListTable(data.data.stocks);
+                    
+                    // 更新季度標題
+                    const quarterTitle = document.getElementById('stockListTitle');
+                    if (quarterTitle) {
+                        quarterTitle.textContent = `低風險股票列表 (${quarter})`;
+                    }
+                } else {
+                    showError('獲取股票列表失敗：' + (data.message || '未知錯誤'));
+                    tableBody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">獲取股票列表失敗</td></tr>';
                 }
             })
             .catch(error => {
                 showError('獲取股票列表時發生錯誤：' + error.message);
+                tableBody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">獲取股票列表時發生錯誤</td></tr>';
             });
+    }
+    
+    // 獲取股票列表（修改為使用當前選擇的季度）
+    function fetchStockList() {
+        // 如果季度選擇器已經初始化，使用選中的季度
+        if (quarterSelect && quarterSelect.value) {
+            fetchStockListByQuarter(quarterSelect.value);
+        } else {
+            // 否則使用當前季度
+            const currentQuarter = getCurrentQuarter();
+            fetchStockListByQuarter(currentQuarter);
+        }
+    }
+    
+    // 獲取當前季度
+    function getCurrentQuarter() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = today.getMonth() + 1;
+        let quarter;
+        
+        if (month <= 3) {
+            quarter = 'Q1';
+        } else if (month <= 6) {
+            quarter = 'Q2';
+        } else if (month <= 9) {
+            quarter = 'Q3';
+        } else {
+            quarter = 'Q4';
+        }
+        
+        return `${year}-${quarter}`;
     }
     
     // 獲取交易決策
     function fetchTradingDecisions(date) {
+        // 顯示加載提示
+        const tableBody = document.querySelector('#tradingDecisionsTable tbody');
+        tableBody.innerHTML = '<tr><td colspan="4" class="text-center">正在加載交易決策...</td></tr>';
+        
         fetch(`/api/trading/decisions?date=${date}`)
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
                     populateTradingDecisionsTable(data.data.decisions);
                 } else {
-                    showError('獲取交易決策失敗：' + data.message);
+                    // 檢查是否有最近的交易日建議
+                    if (data.details && data.details.nearest_trading_day) {
+                        const nearestDate = data.details.nearest_trading_day;
+                        showWarning(`所選日期不是交易日。是否要查看 ${nearestDate} 的交易決策？`, function() {
+                            tradingDateInput.value = nearestDate;
+                            fetchTradingDecisions(nearestDate);
+                        });
+                        tableBody.innerHTML = '<tr><td colspan="4" class="text-center text-warning">所選日期不是交易日</td></tr>';
+                    } else {
+                        showError('獲取交易決策失敗：' + data.message);
+                        tableBody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">獲取交易決策失敗</td></tr>';
+                    }
                 }
             })
             .catch(error => {
                 showError('獲取交易決策時發生錯誤：' + error.message);
+                tableBody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">獲取交易決策時發生錯誤</td></tr>';
             });
     }
     
@@ -138,6 +295,31 @@ document.addEventListener('DOMContentLoaded', function() {
                     updatePerformanceMetrics(data.data);
                     updatePerformanceChart(data.data);
                 } else {
+                    // 檢查是否有有效日期範圍建議
+                    if (data.valid_range) {
+                        const { start_date, end_date } = data.valid_range;
+                        showWarning(`所選日期範圍無效。使用有效範圍 ${start_date} 到 ${end_date} 代替？`, function() {
+                            fetchPerformanceSummaryWithDates(start_date, end_date);
+                        });
+                    } else {
+                        showError('獲取績效摘要失敗：' + data.message);
+                    }
+                }
+            })
+            .catch(error => {
+                showError('獲取績效摘要時發生錯誤：' + error.message);
+            });
+    }
+    
+    // 使用指定日期範圍獲取績效摘要
+    function fetchPerformanceSummaryWithDates(startDate, endDate) {
+        fetch(`/api/results/summary?start_date=${startDate}&end_date=${endDate}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    updatePerformanceMetrics(data.data);
+                    updatePerformanceChart(data.data);
+                } else {
                     showError('獲取績效摘要失敗：' + data.message);
                 }
             })
@@ -151,18 +333,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const tableBody = document.querySelector('#stockListTable tbody');
         tableBody.innerHTML = '';
         
-        // 模擬數據
-        const mockStocks = [
-            { code: 'Stock1', name: '股票一', risk: 0.2, weight: 0.3 },
-            { code: 'Stock2', name: '股票二', risk: 0.3, weight: 0.2 },
-            { code: 'Stock3', name: '股票三', risk: 0.1, weight: 0.5 }
-        ];
+        if (!stocks || stocks.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="4" class="text-center">沒有股票數據</td></tr>';
+            return;
+        }
         
-        mockStocks.forEach(stock => {
+        stocks.forEach(stock => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${stock.code}</td>
-                <td>${stock.name}</td>
+                <td>${stock.stock_id}</td>
+                <td>${stock.stock_name}</td>
                 <td>${stock.risk.toFixed(2)}</td>
                 <td>${(stock.weight * 100).toFixed(2)}%</td>
             `;
@@ -175,39 +355,33 @@ document.addEventListener('DOMContentLoaded', function() {
         const tableBody = document.querySelector('#tradingDecisionsTable tbody');
         tableBody.innerHTML = '';
         
-        // 使用模擬數據
-        const mockDecisions = {
-            'Stock1': { name: '股票一', action: 'buy', quantity: 100 },
-            'Stock2': { name: '股票二', action: 'sell', quantity: 50 },
-            'Stock3': { name: '股票三', action: 'hold', quantity: 0 }
-        };
+        if (!decisions || decisions.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="4" class="text-center">沒有交易決策</td></tr>';
+            return;
+        }
         
-        Object.entries(mockDecisions).forEach(([code, decision]) => {
+        decisions.forEach(decision => {
             const row = document.createElement('tr');
             
             // 根據操作類型設置不同的顏色
             let actionClass = '';
-            let actionText = '';
             
             switch (decision.action) {
-                case 'buy':
+                case 1:
                     actionClass = 'text-success';
-                    actionText = '買入';
                     break;
-                case 'sell':
+                case -1:
                     actionClass = 'text-danger';
-                    actionText = '賣出';
                     break;
-                case 'hold':
+                case 0:
                     actionClass = 'text-warning';
-                    actionText = '持有';
                     break;
             }
             
             row.innerHTML = `
-                <td>${code}</td>
-                <td>${decision.name}</td>
-                <td class="${actionClass}">${actionText}</td>
+                <td>${decision.stock_id}</td>
+                <td>${decision.stock_id}</td>
+                <td class="${actionClass}">${decision.action_name}</td>
                 <td>${decision.quantity}</td>
             `;
             tableBody.appendChild(row);
@@ -262,10 +436,58 @@ document.addEventListener('DOMContentLoaded', function() {
         performanceChart.update();
     }
     
-    // 顯示錯誤信息
+    // 顯示錯誤訊息
     function showError(message) {
-        console.error(message);
-        // 這裡可以添加顯示錯誤信息的 UI 邏輯
-        alert(message);
+        // 創建警告元素
+        const alertDiv = document.createElement('div');
+        alertDiv.classList.add('alert', 'alert-danger', 'alert-dismissible', 'fade', 'show', 'mt-3');
+        alertDiv.setAttribute('role', 'alert');
+        alertDiv.innerHTML = `
+            <strong>錯誤!</strong> ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        
+        // 添加到頁面
+        document.querySelector('.container').prepend(alertDiv);
+        
+        // 5秒後自動關閉
+        setTimeout(() => {
+            const bsAlert = new bootstrap.Alert(alertDiv);
+            bsAlert.close();
+        }, 5000);
+    }
+    
+    // 顯示警告訊息，帶有確認按鈕
+    function showWarning(message, confirmCallback) {
+        // 創建警告元素
+        const alertDiv = document.createElement('div');
+        alertDiv.classList.add('alert', 'alert-warning', 'alert-dismissible', 'fade', 'show', 'mt-3');
+        alertDiv.setAttribute('role', 'alert');
+        
+        const confirmBtn = document.createElement('button');
+        confirmBtn.classList.add('btn', 'btn-sm', 'btn-primary', 'ms-3');
+        confirmBtn.textContent = '確認';
+        confirmBtn.addEventListener('click', function() {
+            confirmCallback();
+            const bsAlert = new bootstrap.Alert(alertDiv);
+            bsAlert.close();
+        });
+        
+        alertDiv.innerHTML = `
+            <strong>警告!</strong> ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        alertDiv.insertBefore(confirmBtn, alertDiv.querySelector('.btn-close'));
+        
+        // 添加到頁面
+        document.querySelector('.container').prepend(alertDiv);
+        
+        // 10秒後自動關閉
+        setTimeout(() => {
+            if (document.body.contains(alertDiv)) {
+                const bsAlert = new bootstrap.Alert(alertDiv);
+                bsAlert.close();
+            }
+        }, 10000);
     }
 }); 

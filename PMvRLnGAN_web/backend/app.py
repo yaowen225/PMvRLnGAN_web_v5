@@ -10,13 +10,26 @@ import os
 import json
 import pandas as pd
 import numpy as np
+from datetime import datetime
 
 from backend.config import (
     FRONTEND_DIR, TEMPLATES_DIR, STATIC_DIR,
     PMVRLNGAN_DIR, GAT_MODEL_PATH, STOCK_LIST_PATH, TCN_MODEL_PATH,
-    DEBUG, SECRET_KEY
+    DEBUG, SECRET_KEY, TRADING_START_DATE, TRADING_END_DATE
 )
 from backend.logger import logger
+from backend.adapters.trading_adapter import (
+    get_trading_decisions as adapter_get_trading_decisions,
+    get_valid_date_range,
+    is_valid_trading_day,
+    is_date_in_range,
+    get_nearest_trading_day,
+    get_performance_summary as adapter_get_performance_summary
+)
+from backend.adapters.stock_adapter import (
+    get_stock_list as adapter_get_stock_list,
+    get_available_quarters as adapter_get_available_quarters
+)
 
 # 創建 Flask 應用
 app = Flask(__name__, 
@@ -66,14 +79,22 @@ def get_stock_picked_list():
     try:
         quarter = request.args.get('quarter', None)
         logger.info(f"獲取低風險股票列表，季度: {quarter}")
-        # 這裡應該是從預訓練模型或結果文件中讀取低風險股票列表
-        # 為了示例，我們返回一個模擬的數據
+        
+        # 使用適配器獲取股票列表
+        result = adapter_get_stock_list(quarter)
+        
+        # 檢查是否有錯誤
+        if 'error' in result:
+            logger.warning(f"獲取低風險股票列表失敗: {result['error']}")
+            return jsonify({
+                'status': 'error',
+                'message': result['error'],
+                'details': result
+            }), 400
+        
         return jsonify({
             'status': 'success',
-            'data': {
-                'quarter': quarter,
-                'stocks': ['Stock1', 'Stock2', 'Stock3']
-            }
+            'data': result
         })
     except Exception as e:
         logger.error(f"獲取低風險股票列表失敗: {str(e)}")
@@ -117,8 +138,8 @@ def get_trading_decisions():
     """獲取交易決策"""
     try:
         date = request.args.get('date', None)
-        stock_ids = request.args.get('stock_ids', None)
-        logger.info(f"獲取交易決策，日期: {date}, 股票IDs: {stock_ids}")
+        stock_ids_str = request.args.get('stock_ids', None)
+        logger.info(f"獲取交易決策，日期: {date}, 股票IDs: {stock_ids_str}")
         
         if not date:
             logger.warning("獲取交易決策失敗: 缺少日期")
@@ -127,18 +148,29 @@ def get_trading_decisions():
                 'message': 'date is required'
             }), 400
         
-        # 這裡應該是從預訓練模型或結果文件中讀取交易決策
-        # 為了示例，我們返回一個模擬的數據
+        # 解析股票 ID 列表（如果有）
+        stock_ids = None
+        if stock_ids_str:
+            try:
+                stock_ids = stock_ids_str.split(',')
+            except Exception as e:
+                logger.warning(f"解析股票ID列表失敗: {str(e)}")
+        
+        # 使用適配器獲取交易決策
+        result = adapter_get_trading_decisions(date, stock_ids)
+        
+        # 檢查是否有錯誤
+        if 'error' in result:
+            logger.warning(f"獲取交易決策失敗: {result['error']}")
+            return jsonify({
+                'status': 'error',
+                'message': result['error'],
+                'details': result
+            }), 400
+        
         return jsonify({
             'status': 'success',
-            'data': {
-                'date': date,
-                'decisions': {
-                    'Stock1': {'action': 'buy', 'quantity': 100},
-                    'Stock2': {'action': 'sell', 'quantity': 50},
-                    'Stock3': {'action': 'hold', 'quantity': 0}
-                }
-            }
+            'data': result
         })
     except Exception as e:
         logger.error(f"獲取交易決策失敗: {str(e)}")
@@ -155,27 +187,66 @@ def get_results_summary():
         end_date = request.args.get('end_date', None)
         logger.info(f"獲取綜合結果，開始日期: {start_date}, 結束日期: {end_date}")
         
-        if not start_date or not end_date:
-            logger.warning("獲取綜合結果失敗: 缺少開始日期或結束日期")
+        # 使用適配器獲取績效摘要
+        result = adapter_get_performance_summary(start_date, end_date)
+        
+        # 檢查是否有錯誤
+        if 'error' in result:
+            logger.warning(f"獲取績效摘要失敗: {result['error']}")
             return jsonify({
                 'status': 'error',
-                'message': 'start_date and end_date are required'
+                'message': result['error'],
+                'details': result
             }), 400
         
-        # 這裡應該是從預訓練模型或結果文件中讀取綜合結果
-        # 為了示例，我們返回一個模擬的數據
         return jsonify({
             'status': 'success',
-            'data': {
-                'start_date': start_date,
-                'end_date': end_date,
-                'total_return': 0.15,
-                'sharpe_ratio': 1.2,
-                'max_drawdown': 0.05
-            }
+            'data': result
         })
     except Exception as e:
-        logger.error(f"獲取綜合結果失敗: {str(e)}")
+        logger.error(f"獲取績效摘要失敗: {str(e)}")
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        }), 500
+
+@app.route('/api/trading/valid-dates', methods=['GET'])
+def get_valid_trading_dates():
+    """獲取有效的交易日期範圍"""
+    try:
+        logger.info("獲取有效的交易日期範圍")
+        date_range = get_valid_date_range()
+        return jsonify({
+            'status': 'success',
+            'data': date_range
+        })
+    except Exception as e:
+        logger.error(f"獲取有效的交易日期範圍失敗: {str(e)}")
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        }), 500
+
+@app.route('/api/stock-picked/quarters', methods=['GET'])
+def get_available_quarters():
+    """獲取可用的季度列表"""
+    try:
+        logger.info("獲取可用的季度列表")
+        result = adapter_get_available_quarters()
+        
+        if 'error' in result:
+            logger.warning(f"獲取可用的季度列表失敗: {result['error']}")
+            return jsonify({
+                'status': 'error',
+                'message': result['error']
+            }), 400
+        
+        return jsonify({
+            'status': 'success',
+            'data': result
+        })
+    except Exception as e:
+        logger.error(f"獲取可用的季度列表失敗: {str(e)}")
         return jsonify({
             'status': 'error',
             'message': str(e)
