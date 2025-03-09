@@ -30,6 +30,12 @@ from backend.adapters.stock_adapter import (
     get_stock_list as adapter_get_stock_list,
     get_available_quarters as adapter_get_available_quarters
 )
+from backend.adapters.gat_adapter import (
+    get_stock_relationships as adapter_get_stock_relationships
+)
+from backend.adapters.tcn_adapter import (
+    get_compressed_features as adapter_get_compressed_features
+)
 
 # 創建 Flask 應用
 app = Flask(__name__, 
@@ -58,13 +64,22 @@ def get_gat_relationships():
     """獲取股票關係數據"""
     try:
         logger.info("獲取股票關係數據")
-        # 這裡應該是從預訓練模型或結果文件中讀取股票關係數據
-        # 為了示例，我們返回一個模擬的數據
+        
+        # 使用適配器獲取股票關係數據
+        result = adapter_get_stock_relationships()
+        
+        # 檢查是否有錯誤
+        if 'error' in result:
+            logger.warning(f"獲取股票關係數據失敗: {result['error']}")
+            return jsonify({
+                'status': 'error',
+                'message': result['error'],
+                'details': result
+            }), 400
+        
         return jsonify({
             'status': 'success',
-            'data': {
-                'relationships': 'GAT relationships data will be here'
-            }
+            'data': result
         })
     except Exception as e:
         logger.error(f"獲取股票關係數據失敗: {str(e)}")
@@ -108,7 +123,8 @@ def get_tcn_ae_features():
     """獲取壓縮後的特徵"""
     try:
         stock_id = request.args.get('stock_id', None)
-        logger.info(f"獲取壓縮後的特徵，股票ID: {stock_id}")
+        date = request.args.get('date', None)
+        logger.info(f"獲取壓縮後的特徵，股票ID: {stock_id}, 日期: {date}")
         
         if not stock_id:
             logger.warning("獲取壓縮後的特徵失敗: 缺少股票ID")
@@ -117,14 +133,21 @@ def get_tcn_ae_features():
                 'message': 'stock_id is required'
             }), 400
         
-        # 這裡應該是從預訓練模型或結果文件中讀取壓縮後的特徵
-        # 為了示例，我們返回一個模擬的數據
+        # 使用適配器獲取壓縮特徵
+        result = adapter_get_compressed_features(stock_id, date)
+        
+        # 檢查是否有錯誤
+        if 'error' in result:
+            logger.warning(f"獲取壓縮後的特徵失敗: {result['error']}")
+            return jsonify({
+                'status': 'error',
+                'message': result['error'],
+                'details': result
+            }), 400
+        
         return jsonify({
             'status': 'success',
-            'data': {
-                'stock_id': stock_id,
-                'features': [0.1, 0.2, 0.3, 0.4, 0.5]
-            }
+            'data': result
         })
     except Exception as e:
         logger.error(f"獲取壓縮後的特徵失敗: {str(e)}")
@@ -253,4 +276,4 @@ def get_available_quarters():
         }), 500
 
 if __name__ == '__main__':
-    app.run(debug=DEBUG) 
+    app.run(host='0.0.0.0', port=5000) 

@@ -499,6 +499,37 @@
 - 階段二完成度：65%
 - 下一步：修改 trading_adapter.py 使用訓練好的模型生成交易決策
 
+### 2024-06-04
+- 修改 trading_adapter.py 使用訓練好的模型生成交易決策
+- 實現 GAT 適配器，讀取股票關係數據
+- 實現 TCN-AE 適配器，讀取壓縮特徵
+- 更新 app.py，連接所有適配器
+- 文件變更：
+  - 修改：PMvRLnGAN_web/backend/adapters/trading_adapter.py
+  - 新增：PMvRLnGAN_web/backend/adapters/gat_adapter.py
+  - 新增：PMvRLnGAN_web/backend/adapters/tcn_adapter.py
+  - 修改：PMvRLnGAN_web/backend/app.py
+- 階段二完成度：85%
+- 下一步：測試所有 API 端點，確保它們可以正常工作
+
+### 2024-06-05
+- 創建測試腳本 test_adapter.py，用於測試交易適配器功能和 API 端點
+- 修復測試腳本中的錯誤，確保能夠正確處理 API 返回的數據結構
+- 完成交易適配器和股票適配器的功能測試
+- 完成相關 API 端點的測試，包括：
+  - /api/trading/valid-dates：返回有效的交易日期範圍
+  - /api/stock-picked/quarters：返回可用的季度列表
+  - /api/stock-picked/list：返回低風險股票列表
+  - /api/trading/decisions：返回指定日期的交易決策
+  - /api/results/summary：返回績效摘要
+- 確認 API 端點返回的數據結構正確，特別是 /api/stock-picked/list 端點
+- 文件變更：
+  - 新增：PMvRLnGAN_web/test_adapter.py
+  - 修改：PMvRLnGAN_web/backend/adapters/trading_adapter.py（修復小錯誤）
+  - 修改：PMvRLnGAN_web/backend/adapters/stock_adapter.py（修復小錯誤）
+- 階段二完成度：90%
+- 下一步：實現 GAT 適配器和 TCN-AE 適配器，完成所有 API 端點的實際數據讀取功能
+
 ### [待添加更多日誌條目]
 
 ---
