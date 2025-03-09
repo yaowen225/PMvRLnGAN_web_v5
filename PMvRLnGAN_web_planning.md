@@ -27,6 +27,7 @@
 - [九、參考資料](#九參考資料) - 重要文件和資源位置
 - [十、測試指南（給測試者）](#十測試指南給測試者) - 階段性測試流程、常見問題排查
 - [十一、協作方式](#十一協作方式) - 代碼更新流程、開發日誌規範、版本控制、溝通與反饋
+- [十二、程式碼區分](#十二程式碼區分) - 明確區分原程式碼與網站程式碼
 
 ---
 
@@ -431,6 +432,16 @@
 - 階段二完成度：15%
 - 下一步：實現股票列表 API 端點的實際資料讀取功能
 
+### 2024-05-30
+- 添加「十二、程式碼區分」章節，明確區分原程式碼與網站程式碼
+- 定義原程式碼範圍（不可修改）和網站程式碼範圍（可開發和修改）
+- 說明適配器模式的設計，用於連接原程式碼和網站界面
+- 提供完整的目錄結構，明確各部分的位置和職責
+- 文件變更：
+  - 修改：PMvRLnGAN_web_planning.md
+- 階段二完成度：20%
+- 下一步：實現股票列表 API 端點的實際資料讀取功能
+
 ### [待添加更多日誌條目]
 
 ---
@@ -671,3 +682,105 @@
    - 開發者（Claude）記錄重要的反饋和決策
 
 通過遵循這些協作方式，我們可以確保開發過程的透明度和效率，同時保持文件的完整性和準確性，即使沒有前面的對話記錄，也能按照此方式順利進行協作。 
+
+## 十二、程式碼區分
+
+> **重要說明**：為確保開發過程中不會意外修改原始程式碼，本節明確區分原程式碼與網站程式碼的範圍和職責。
+
+### 12.1 原程式碼（不可修改）
+
+原程式碼是指 PMvRLnGAN 系統的原始實現，這些程式碼**不應被修改**，只能被讀取和使用。
+
+**原程式碼範圍**：
+- 位於 `PMvRLnGAN/` 目錄下的所有文件
+- 包括以下模組：
+  - GAT 模組：`PMvRLnGAN/GAT-main/`
+  - Stock-Picked Agent 模組：`PMvRLnGAN/Stock-Picked Agent/`
+  - TCN-AE 模組：`PMvRLnGAN/TCN-AE/`
+  - Trading Agent 模組：`PMvRLnGAN/Trading Agent/`
+- 所有預訓練模型文件：
+  - GAT 模型：`gat_model.pth`
+  - TCN-AE 模型：`tcn_20_model.h5`
+  - 其他模型檔案
+- 所有結果文件：
+  - 低風險股票列表：`Low-risk stock list.csv`
+  - 交易數據：`tcn_daily_trade_info.7z`
+  - 其他結果檔案
+
+**原程式碼使用原則**：
+1. 僅讀取原程式碼的結果和模型，不修改任何原始檔案
+2. 不改變原程式碼的執行邏輯和參數設定
+3. 如需使用原程式碼的功能，應通過導入模組或讀取結果文件的方式
+
+### 12.2 網站程式碼（可開發和修改）
+
+網站程式碼是指為本專案新開發的部分，用於提供網頁介面和連接原程式碼的功能。
+
+**網站程式碼範圍**：
+- 位於 `PMvRLnGAN_web/` 目錄下的所有文件
+- 包括以下部分：
+  - 後端 Flask 應用：`PMvRLnGAN_web/backend/`
+  - 前端 HTML/CSS/JavaScript：`PMvRLnGAN_web/frontend/`
+  - 配置文件：`PMvRLnGAN_web/config.py`
+  - 啟動腳本：`PMvRLnGAN_web/run.py`、`PMvRLnGAN_web/start.bat`
+  - 文檔文件：`PMvRLnGAN_web/README.md`、`PMvRLnGAN_web_planning.md`
+  - 依賴項文件：`PMvRLnGAN_web/requirements.txt`
+
+**網站程式碼開發原則**：
+1. 遵循模組化設計，保持代碼清晰和可維護
+2. 實現適配器模式，連接原程式碼和網站界面
+3. 提供友好的用戶界面和錯誤處理
+4. 確保所有功能都有適當的文檔和測試
+
+### 12.3 適配器模式
+
+為了連接原程式碼和網站界面，我們採用適配器模式設計：
+
+1. **數據適配器**：
+   - 位於 `PMvRLnGAN_web/backend/adapters/` 目錄
+   - 負責從原程式碼的結果文件中讀取數據
+   - 將數據轉換為網站 API 可用的格式
+
+2. **模型適配器**：
+   - 位於 `PMvRLnGAN_web/backend/adapters/` 目錄
+   - 負責加載和使用原程式碼的預訓練模型
+   - 提供模型預測結果給網站 API
+
+3. **路徑配置**：
+   - 在 `PMvRLnGAN_web/config.py` 中設置原程式碼的路徑
+   - 確保適配器可以正確找到原程式碼的文件
+
+### 12.4 目錄結構
+
+完整的目錄結構應如下所示：
+
+```
+PMvRLnGAN/                   # 原程式碼目錄（不可修改）
+  ├── GAT-main/              # GAT 模組
+  ├── Stock-Picked Agent/    # Stock-Picked Agent 模組
+  ├── TCN-AE/                # TCN-AE 模組
+  └── Trading Agent/         # Trading Agent 模組
+
+PMvRLnGAN_web/              # 網站程式碼目錄（可開發和修改）
+  ├── backend/               # 後端程式碼
+  │   ├── adapters/          # 適配器模組
+  │   │   ├── gat_adapter.py
+  │   │   ├── stock_adapter.py
+  │   │   ├── tcn_adapter.py
+  │   │   └── trading_adapter.py
+  │   ├── models/            # 數據模型
+  │   ├── routes/            # API 路由
+  │   └── app.py             # Flask 應用主文件
+  ├── frontend/              # 前端程式碼
+  │   ├── static/            # 靜態資源
+  │   │   ├── css/           # CSS 樣式
+  │   │   ├── js/            # JavaScript 腳本
+  │   │   └── lib/           # 第三方庫
+  │   └── templates/         # HTML 模板
+  ├── logs/                  # 日誌文件
+  ├── config.py              # 配置文件
+  ├── run.py                 # 啟動腳本
+  ├── start.bat              # Windows 啟動批處理文件
+  ├── requirements.txt       # 依賴項文件
+  ├── README.md              # 說明文件
+  └── PMvRLnGAN_web_planning.md  # 開發規劃文件
