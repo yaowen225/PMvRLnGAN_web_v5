@@ -18,22 +18,6 @@ This report documents the development progress of the PMvRLnGAN system from orig
 - [Data Processing Strategy](#data-processing-strategy)
 
 
-### : Performance Summary Functionality Development
-- ✅ Implemented performance summary functionality, providing simulated performance data
-- ✅ Developed `/api/results/summary` API endpoint
-- ✅ Modified train trade agent.ipynb, added model and trading decision saving code
-
-### : Test Script Development
-- ✅ Created test_adapter.py test script
-- ✅ Fixed errors in the test script to ensure correct handling of API returned data structures
-- ✅ Completed functional testing of trading adapter and stock adapter
-- ✅ Completed testing of all implemented API endpoints
-
-### : Frontend Basic Framework Development
-- ✅ Designed and implemented the main page HTML structure
-- ✅ Implemented basic CSS styles
-- ✅ Developed frontend JavaScript interaction functionality
-- ✅ Implemented basic communication with backend APIs
 
 ## Original Code Analysis
 
@@ -219,6 +203,23 @@ I implemented a data source control mechanism, controlling the data source throu
 - ✅ Optimized the trading adapter, removed unnecessary tcn_daily_trade_info.7z extraction code
 - ✅ Modified the trading adapter to directly read trading dates and stock data from Low-risk stock list.csv
 - ✅ Developed `/api/trading/valid-dates` and `/api/trading/decisions` API endpoints
+
+### : Performance Summary Functionality Development
+- ✅ Implemented performance summary functionality, providing simulated performance data
+- ✅ Developed `/api/results/summary` API endpoint
+- ✅ Modified train trade agent.ipynb, added model and trading decision saving code
+
+### : Test Script Development
+- ✅ Created test_adapter.py test script
+- ✅ Fixed errors in the test script to ensure correct handling of API returned data structures
+- ✅ Completed functional testing of trading adapter and stock adapter
+- ✅ Completed testing of all implemented API endpoints
+
+### : Frontend Basic Framework Development
+- ✅ Designed and implemented the main page HTML structure
+- ✅ Implemented basic CSS styles
+- ✅ Developed frontend JavaScript interaction functionality
+- ✅ Implemented basic communication with backend APIs
 
 
 ## Development Progress Tracking
