@@ -558,9 +558,130 @@
 主要依賴包版本（詳見 requirements.txt）：
 - Python: 3.8.18
 - Flask/FastAPI: [待確定]
-- Pandas: [待確定]
-- NumPy: [待確定]
-- TensorFlow/PyTorch: [待確定] 
+
+### 9.4 資料來源與網頁對應
+
+網站使用的資料來源分為兩類：真實資料（從原始資料夾讀取的）和模擬資料（暫時生成的）。以下是各個模組的資料來源情況：
+
+#### 資料來源概覽表
+
+| 模組 | 功能/資料 | 來源類型 | 資料位置/生成方式 | 原始檔案位置 | 原始資料夾 | 網頁對應位置 |
+|------|-----------|----------|-------------------|--------------|------------|--------------|
+| **股票適配器** | 低風險股票列表 | 真實資料 | `PMvRLnGAN/Trading Agent/Low-risk stock list.csv` | `PMvRLnGAN/Trading Agent/Low-risk stock list.csv` | Trading Agent | 「低風險股票列表」頁面，顯示每季度選出的低風險股票 |
+| | 季度列表 | 真實資料 | 從低風險股票列表中提取 | 同上 | Trading Agent | 「低風險股票列表」頁面的季度選擇器下拉選單 |
+| | 股票名稱和代碼 | 真實資料 | 從低風險股票列表中提取 | 同上 | Trading Agent | 所有頁面中顯示的股票名稱和代碼 |
+| | 股票風險評估 | 模擬資料 | 隨機生成的風險值 | 未來將使用 `PMvRLnGAN/Stock-Picked Agent/predict stock-picked data.ipynb` 的結果 | Stock-Picked Agent | 「低風險股票列表」頁面中每支股票的風險值和權重 |
+| **交易適配器** | 交易日期範圍 | 真實資料 | 從低風險股票列表中提取 | 同上 | Trading Agent | 「交易決策」頁面的日期選擇器範圍限制 |
+| | 有效交易日檢查 | 真實資料 | 基於真實交易日期的驗證 | 同上 | Trading Agent | 「交易決策」頁面的日期選擇器有效日期驗證 |
+| | 交易決策 | 部分真實資料 | 目前使用 `PMvRLnGAN/Trading Agent/models/trading_decisions_examples.csv`，僅包含 2024-05-17 至 2024-06-04 的有限交易日期數據 | 未來將使用 `PMvRLnGAN/Trading Agent/models/trading_agent_model.zip` 生成更完整的交易決策 | Trading Agent | 「交易決策」頁面的交易建議表格（買入/賣出/持有） |
+| | 績效摘要 | 模擬資料 | 隨機生成的績效指標 | 未來將使用 `PMvRLnGAN/Trading Agent/models/trading_agent_performance.json` | Trading Agent | 「績效摘要」頁面的績效指標圖表和數據 |
+| **GAT 適配器** | 股票關係數據 | 模擬資料 | 隨機生成的關係矩陣 | 未來將使用 `PMvRLnGAN/GAT-main/gat_model.pth` 和 `PMvRLnGAN/GAT-main/edge.py` 生成的結果 | GAT-main | 「股票關係網絡」頁面的網絡圖視覺化 |
+| | 關係權重 | 模擬資料 | 隨機生成的權重值 | 同上 | GAT-main | 「股票關係網絡」頁面中連接線的粗細和顏色 |
+| **TCN-AE 適配器** | 壓縮特徵 | 模擬資料 | 隨機生成的20維特徵向量 | 未來將使用 `PMvRLnGAN/TCN-AE/tcn_20_model.h5` 和 `PMvRLnGAN/TCN-AE/TCN-AE predict data.ipynb` 生成的結果 | TCN-AE | 「技術指標分析」頁面的特徵重要性圖表 |
+| | 特徵向量 | 模擬資料 | 基於股票ID和日期的隨機生成 | 同上 | TCN-AE | 「技術指標分析」頁面的特徵趨勢圖表 |
+| **Stock-Picked 適配器** | 股票選擇模型 | 模擬資料 | 基於預定義規則的選擇 | 未來將使用 `PMvRLnGAN/Stock-Picked Agent/predict stock-picked data.ipynb` 的結果 | Stock-Picked Agent | 「投資組合構建」頁面的股票選擇邏輯說明 |
+| | 財務報表分析 | 模擬資料 | 隨機生成的財務指標 | 未來將使用 `PMvRLnGAN/Stock-Picked Agent/Financial statements_SharpeRatio_RL.csv` | Stock-Picked Agent | 「財務分析」頁面的財務指標比較圖表 |
+
+#### 資料來源控制機制
+
+系統通過配置文件 `config.py` 中的 `USE_MOCK_DATA` 變數控制資料來源：
+
+```python
+# 是否使用模擬數據（當無法讀取原始數據時）
+USE_MOCK_DATA = False
+```
+
+當設置為 `False` 時，系統會：
+1. 優先嘗試讀取真實數據文件
+2. 如果找不到真實數據，自動回退到使用模擬數據
+3. 在使用模擬數據時，會在返回結果中添加 `is_mock_data: true` 標記
+
+### 9.5 原程式執行與資料使用分析
+
+為了確保網站能夠展示真實的分析結果，我們需要明確哪些部分需要重新執行，哪些可以直接使用訓練完的成果。以下是詳細分析：
+
+#### 1. GAT (Graph Attention Network)
+
+**可以直接使用的部分**：
+- 預訓練的 GAT 模型 (`gat_model.pth`)
+- 如果已經有生成好的股票關係矩陣，可以直接使用
+
+**需要執行的部分**：
+- 如果沒有預先生成的股票關係矩陣，需要使用 `edge.py` 腳本來生成
+- 這個過程需要載入 GAT 模型並執行前向傳播，生成股票之間的關係權重
+
+**差距與解決方案**：
+- 目前的 `gat_adapter.py` 是尋找 `relationships.json` 文件，但這個文件可能不存在
+- 需要執行 `edge.py` 來生成這個文件，或者修改適配器直接使用 GAT 模型
+- 建議：執行一次 `edge.py` 腳本，生成 `relationships.json` 文件，然後網站可以直接讀取這個文件
+
+#### 2. Stock-Picked Agent
+
+**可以直接使用的部分**：
+- 低風險股票列表 (`Low-risk stock list.csv`)
+- 這個文件已經包含了每個季度選出的低風險股票
+
+**需要執行的部分**：
+- 如果需要更新低風險股票列表，需要執行 `predict stock-picked data.ipynb`
+- 如果需要重新訓練 Stock-Picked Agent，需要執行 `train stock-picked agent.ipynb`
+
+**差距與解決方案**：
+- 目前的 `stock_adapter.py` 已經可以直接讀取 `Low-risk stock list.csv`
+- 風險值是隨機生成的，實際應該從 Stock-Picked Agent 的結果中獲取
+- 建議：執行一次 `predict stock-picked data.ipynb`，生成包含風險值的股票列表，然後修改 `stock_adapter.py` 讀取這個文件
+
+#### 3. TCN-AE (Temporal Convolutional Network Autoencoder)
+
+**可以直接使用的部分**：
+- 預訓練的 TCN-AE 模型 (`tcn_20_model.h5`)
+- 如果已經有生成好的壓縮特徵，可以直接使用
+
+**需要執行的部分**：
+- 如果沒有預先生成的壓縮特徵，需要使用 TCN-AE 模型來壓縮股票的技術指標
+- 這個過程需要載入 TCN-AE 模型並執行前向傳播，生成壓縮後的特徵向量
+
+**差距與解決方案**：
+- 目前的 `tcn_adapter.py` 是尋找 `compressed_features` 目錄下的文件，但這些文件可能不存在
+- 需要執行 `TCN-AE predict data.ipynb` 來生成這些文件，或者修改適配器直接使用 TCN-AE 模型
+- 建議：執行一次 `TCN-AE predict data.ipynb`，生成壓縮特徵文件，然後網站可以直接讀取這些文件
+
+#### 4. Trading Agent
+
+**可以直接使用的部分**：
+- 預訓練的交易模型 (`trading_agent_model.zip`)
+- 模型配置 (`trading_agent_config.json`)
+- 交易決策示例 (`trading_decisions_examples.csv`)
+- 模型性能指標 (`trading_agent_performance.json`)
+
+**需要執行的部分**：
+- 如果需要更完整的交易決策，需要修改 `train trade agent.ipynb` 中保存交易決策的代碼
+- 如果需要重新訓練 Trading Agent，需要執行 `train trade agent.ipynb`
+
+**差距與解決方案**：
+- 目前的 `trading_adapter.py` 已經可以讀取 `trading_decisions_examples.csv`
+- 但這個文件只包含 2024-05-17 至 2024-06-04 的有限交易日期數據
+- 建議：修改 `train trade agent.ipynb` 中的代碼，保存完整的交易決策（而不只是前 30 行），然後網站可以直接讀取這個文件
+
+#### 只執行一次交易分析的可行性
+
+根據以上分析，只執行一次交易分析是完全可行的，具體方法如下：
+
+1. **預處理階段**（一次性執行）：
+   - 使用 `edge.py` 生成股票關係矩陣，保存為 `relationships.json`
+   - 使用 `TCN-AE predict data.ipynb` 生成壓縮特徵，保存到 `compressed_features` 目錄
+   - 修改 `train trade agent.ipynb` 中的代碼，保存完整的交易決策，而不只是前 30 行
+
+2. **網站階段**（直接使用預處理結果）：
+   - `gat_adapter.py` 讀取 `relationships.json`
+   - `tcn_adapter.py` 讀取 `compressed_features` 目錄下的文件
+   - `trading_adapter.py` 讀取 `trading_decisions_examples.csv`
+   - `stock_adapter.py` 讀取 `Low-risk stock list.csv`
+
+這種方式的優點是：
+1. 簡化開發流程
+2. 減少運行時錯誤的可能性
+3. 提高網站性能
+4. 確保結果的一致性
 
 ## 十、測試指南（給測試者）
 
