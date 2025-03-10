@@ -12,6 +12,7 @@
 - [網站功能說明](#網站功能說明)
 - [已完成的開發工作](#已完成的開發工作)
 - [測試方法與結果](#測試方法與結果)
+- [資料來源說明](#資料來源說明)
 - [整體開發規劃](#整體開發規劃)
 - [下一步工作](#下一步工作)
 
@@ -198,6 +199,54 @@ print(f"總回報率: {summary.get('total_return', 'N/A')}%")
    - `/api/stock-picked/list` 端點返回正確的股票列表
    - `/api/trading/decisions` 端點返回正確的交易決策
    - `/api/results/summary` 端點返回正確的績效摘要
+
+## 資料來源說明
+
+目前，網站使用的資料來源分為兩類：真實資料（從原始資料夾讀取的）和模擬資料（暫時生成的）。以下是各個模組的資料來源情況：
+
+### 資料來源概覽表
+
+| 模組 | 功能/資料 | 來源類型 | 資料位置/生成方式 | 原始檔案位置 | 原始資料夾 | 網頁對應位置 |
+|------|-----------|----------|-------------------|--------------|------------|--------------|
+| **股票適配器** | 低風險股票列表 | 真實資料 | `PMvRLnGAN/Trading Agent/Low-risk stock list.csv` | `PMvRLnGAN/Trading Agent/Low-risk stock list.csv` | Trading Agent | 「低風險股票列表」頁面，顯示每季度選出的低風險股票 |
+| | 季度列表 | 真實資料 | 從低風險股票列表中提取 | 同上 | Trading Agent | 「低風險股票列表」頁面的季度選擇器下拉選單 |
+| | 股票名稱和代碼 | 真實資料 | 從低風險股票列表中提取 | 同上 | Trading Agent | 所有頁面中顯示的股票名稱和代碼 |
+| | 股票風險評估 | 模擬資料 | 隨機生成的風險值 | 未來將使用 `PMvRLnGAN/Stock-Picked Agent/predict stock-picked data.ipynb` 的結果 | Stock-Picked Agent | 「低風險股票列表」頁面中每支股票的風險值和權重 |
+| **交易適配器** | 交易日期範圍 | 真實資料 | 從低風險股票列表中提取 | 同上 | Trading Agent | 「交易決策」頁面的日期選擇器範圍限制 |
+| | 有效交易日檢查 | 真實資料 | 基於真實交易日期的驗證 | 同上 | Trading Agent | 「交易決策」頁面的日期選擇器有效日期驗證 |
+| | 交易決策 | 模擬資料 | 基於日期和股票ID的隨機生成 | 未來將使用 `PMvRLnGAN/Trading Agent/models/trading_agent_model.zip` | Trading Agent | 「交易決策」頁面的交易建議表格（買入/賣出/持有） |
+| | 績效摘要 | 模擬資料 | 隨機生成的績效指標 | 未來將使用 `PMvRLnGAN/Trading Agent/models/trading_agent_performance.json` | Trading Agent | 「績效摘要」頁面的績效指標圖表和數據 |
+| **GAT 適配器** | 股票關係數據 | 模擬資料 | 隨機生成的關係矩陣 | 未來將使用 `PMvRLnGAN/GAT-main/gat_model.pth` 和 `PMvRLnGAN/GAT-main/edge.py` 生成的結果 | GAT-main | 「股票關係網絡」頁面的網絡圖視覺化 |
+| | 關係權重 | 模擬資料 | 隨機生成的權重值 | 同上 | GAT-main | 「股票關係網絡」頁面中連接線的粗細和顏色 |
+| **TCN-AE 適配器** | 壓縮特徵 | 模擬資料 | 隨機生成的20維特徵向量 | 未來將使用 `PMvRLnGAN/TCN-AE/tcn_20_model.h5` 和 `PMvRLnGAN/TCN-AE/TCN-AE predict data.ipynb` 生成的結果 | TCN-AE | 「技術指標分析」頁面的特徵重要性圖表 |
+| | 特徵向量 | 模擬資料 | 基於股票ID和日期的隨機生成 | 同上 | TCN-AE | 「技術指標分析」頁面的特徵趨勢圖表 |
+| **Stock-Picked 適配器** | 股票選擇模型 | 模擬資料 | 基於預定義規則的選擇 | 未來將使用 `PMvRLnGAN/Stock-Picked Agent/predict stock-picked data.ipynb` 的結果 | Stock-Picked Agent | 「投資組合構建」頁面的股票選擇邏輯說明 |
+| | 財務報表分析 | 模擬資料 | 隨機生成的財務指標 | 未來將使用 `PMvRLnGAN/Stock-Picked Agent/Financial statements_SharpeRatio_RL.csv` | Stock-Picked Agent | 「財務分析」頁面的財務指標比較圖表 |
+
+### 資料來源控制機制
+
+系統通過配置文件 `config.py` 中的 `USE_MOCK_DATA` 變數控制資料來源：
+
+```python
+# 是否使用模擬數據（當無法讀取原始數據時）
+USE_MOCK_DATA = False
+```
+
+當設置為 `False` 時，系統會：
+1. 優先嘗試讀取真實數據文件
+2. 如果找不到真實數據，自動回退到使用模擬數據
+3. 在使用模擬數據時，會在返回結果中添加 `is_mock_data: true` 標記
+
+### 未來改進計劃
+
+為了提高系統的準確性和實用性，我們計劃在下一階段開發中：
+
+1. **優先完成 GAT 適配器**：實現從 `gat_model.pth` 讀取真實的股票關係數據，並使用 `edge.py` 生成股票關係矩陣
+2. **完成 TCN-AE 適配器**：實現從 `tcn_20_model.h5` 讀取真實的壓縮特徵，並使用 `tcnae.py` 進行特徵壓縮
+3. **改進交易適配器**：連接到訓練好的交易模型 `trading_agent_model.zip`，生成真實的交易決策
+4. **添加數據驗證機制**：確保所有讀取的數據格式正確且完整
+
+這些改進將使網站能夠提供基於真實模型的分析結果，而不是模擬數據。
 
 ## 整體開發規劃
 
