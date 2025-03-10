@@ -8,36 +8,15 @@ This report documents the development progress of the PMvRLnGAN system from orig
 
 ## Table of Contents
 
-- [Development Timeline](#development-timeline)
 - [Original Code Analysis](#original-code-analysis)
 - [Implemented Features](#implemented-features)
 - [Test Results](#test-results)
 - [Data Source Analysis](#data-source-analysis)
+- [Development Timeline](#development-timeline)
 - [Development Progress Tracking](#development-progress-tracking)
 - [Next Phase Work](#next-phase-work)
 - [Data Processing Strategy](#data-processing-strategy)
 
-## Development Timeline
-
-### : Basic Infrastructure Design
-- ✅ Analyzed the original PMvRLnGAN code structure and execution flow
-- ✅ Designed the system architecture (frontend, backend, data flow)
-- ✅ Selected the technology stack: Flask as the backend framework, pure HTML/CSS/JavaScript as the frontend technology
-- ✅ Established the development environment and basic project structure
-- ✅ Tested the feasibility of directly reading pre-trained models and result files
-
-### : Stock Adapter Development
-- ✅ Implemented low-risk stock list reading functionality
-- ✅ Implemented quarter selector functionality
-- ✅ Developed `/api/stock-picked/quarters` and `/api/stock-picked/list` API endpoints
-- ✅ Added error handling and logging functionality
-
-### : Trading Adapter Development
-- ✅ Implemented date range limitation and valid trading day checking functionality
-- ✅ Implemented trading decision retrieval functionality
-- ✅ Optimized the trading adapter, removed unnecessary tcn_daily_trade_info.7z extraction code
-- ✅ Modified the trading adapter to directly read trading dates and stock data from Low-risk stock list.csv
-- ✅ Developed `/api/trading/valid-dates` and `/api/trading/decisions` API endpoints
 
 ### : Performance Summary Functionality Development
 - ✅ Implemented performance summary functionality, providing simulated performance data
@@ -218,6 +197,29 @@ I conducted a detailed analysis of the data sources used by the website, disting
 | | Feature vectors | ⚠️ Simulated data | Randomly generated feature vectors | "Technical Indicator Analysis" page |
 
 I implemented a data source control mechanism, controlling the data source through the `USE_MOCK_DATA` variable in the configuration file `config.py`. When set to `False`, the system will first try to read real data files, and if not found, automatically fall back to using simulated data.
+
+## Development Timeline
+
+### : Basic Infrastructure Design
+- ✅ Analyzed the original PMvRLnGAN code structure and execution flow
+- ✅ Designed the system architecture (frontend, backend, data flow)
+- ✅ Selected the technology stack: Flask as the backend framework, pure HTML/CSS/JavaScript as the frontend technology
+- ✅ Established the development environment and basic project structure
+- ✅ Tested the feasibility of directly reading pre-trained models and result files
+
+### : Stock Adapter Development
+- ✅ Implemented low-risk stock list reading functionality
+- ✅ Implemented quarter selector functionality
+- ✅ Developed `/api/stock-picked/quarters` and `/api/stock-picked/list` API endpoints
+- ✅ Added error handling and logging functionality
+
+### : Trading Adapter Development
+- ✅ Implemented date range limitation and valid trading day checking functionality
+- ✅ Implemented trading decision retrieval functionality
+- ✅ Optimized the trading adapter, removed unnecessary tcn_daily_trade_info.7z extraction code
+- ✅ Modified the trading adapter to directly read trading dates and stock data from Low-risk stock list.csv
+- ✅ Developed `/api/trading/valid-dates` and `/api/trading/decisions` API endpoints
+
 
 ## Development Progress Tracking
 
